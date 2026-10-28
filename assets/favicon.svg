@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <title>Ascend</title>
+  <g fill="none" stroke-width="10" stroke-linejoin="miter" stroke-linecap="butt">
+    <polyline points="20,88 50,58 80,88" stroke="#155E4A"/>
+    <polyline points="20,66 50,36 80,66" stroke="#1F9E77"/>
+    <polyline points="20,44 50,14 80,44" stroke="#2DE1A4"/>
+  </g>
+</svg>

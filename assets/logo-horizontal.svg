@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 370 100" width="370" height="100">
+  <title>Ascend</title>
+  <g fill="none" stroke-width="10" stroke-linejoin="miter" stroke-linecap="butt">
+    <polyline points="20,88 50,58 80,88" stroke="#155E4A"/>
+    <polyline points="20,66 50,36 80,66" stroke="#1F9E77"/>
+    <polyline points="20,44 50,14 80,44" stroke="#2DE1A4"/>
+  </g>
+  <g fill="none" stroke="#E8EEF5" stroke-width="7" stroke-linejoin="miter" stroke-linecap="butt">
+    <polyline points="120,70 134,30 148,70"/>
+    <polyline points="190,30 162,30 162,50 190,50 190,70 162,70"/>
+    <polyline points="232,30 204,30 204,70 232,70"/>
+    <polyline points="274,30 246,30 246,70 274,70"/>
+    <line x1="246" y1="50" x2="268" y2="50"/>
+    <polyline points="288,70 288,30 316,70 316,30"/>
+    <polygon points="330,30 348,30 358,40 358,60 348,70 330,70"/>
+  </g>
+</svg>
