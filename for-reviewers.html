@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; base-uri 'self'; form-action 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Ascend · Overview for reviewers</title>
+  <meta name="description" content="English overview of Ascend for Riot Games reviewers: product, user flow, policy compliance, data handling and API usage.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="testata">
+  <div class="contenitore">
+    <a href="index.html" aria-label="Ascend, home page"><img src="assets/logo-horizontal.svg" alt="Ascend" width="125" height="34"></a>
+    <nav class="menu" aria-label="Pages">
+      <a href="index.html">Home (Italian)</a>
+      <a href="index.html#come-funziona">User flow</a>
+    </nav>
+  </div>
+</header>
+
+<main class="legale">
+  <div class="contenitore">
+    <span class="etichetta">For Riot Games reviewers · Application 898871</span>
+    <h1>Ascend at a glance</h1>
+    <p>The rest of this website is in Italian, the language of our community. This page summarizes in English what Ascend does, how it uses the VALORANT API and how it follows Riot's policies.</p>
+
+    <h2>1. What Ascend is</h2>
+    <p>Ascend is a <strong>free, ad-free public Discord community</strong> for Italian VALORANT players, built around healthy competition and personal growth. Its bot, <strong>Coach</strong>, turns the <strong>competitive matches</strong> of members who opt in via Riot Sign On into personal stats, community leaderboards, a weekly recap and simple post-match coaching tips in Italian.</p>
+    <ul>
+      <li>The public server opens once the production key is approved; anyone will be able to join. It is not a private, personal-use or friends-only server.</li>
+      <li>No paid features, no ads, no donations.</li>
+      <li>Only competitive (ranked) matches are tracked. Other queues are ignored and never downloaded.</li>
+      <li>EU (Italian) players only, on PC.</li>
+    </ul>
+
+    <h2>2. User flow</h2>
+    <p>The flow is illustrated step by step, with mockups, in the <a href="index.html#come-funziona">"Come funziona" section</a> of the home page.</p>
+    <ol>
+      <li>In Discord, the member runs <code>/collega</code> ("link"). Coach replies privately with a single-use link valid for 10 minutes.</li>
+      <li>The link opens a consent page that explains what we store, why, who can see it and how to delete it. It clearly states that <strong>linking makes the player's match stats public</strong> in the community and on this website, and that players who have not linked are never shown. The player confirms they are at least 14 (the Italian age of digital consent) and accepts the privacy policy.</li>
+      <li>The player logs in on Riot's own RSO page. We never see their credentials.</li>
+      <li>Our server exchanges the authorization code, calls <code>/riot/account/v1/accounts/me</code> once to read the PUUID and Riot ID, then discards the access token. No <code>offline_access</code>, no stored RSO tokens.</li>
+      <li>A background worker loads the player's competitive matches from the last 30 days, then checks for new matches periodically.</li>
+      <li>The player uses <code>/stats</code>, appears in leaderboards once they reach a minimum number of matches, and is included in the Monday recap.</li>
+      <li><code>/scollega</code> ("unlink") deletes all of the player's data immediately; <code>/privacy</code> shows or exports it.</li>
+    </ol>
+
+    <h2>3. Policy compliance</h2>
+    <ul>
+      <li><strong>Opt-in only.</strong> No data is collected or shown for players who have not linked via RSO; we never look up players by Riot ID. Match details include all ten players: data of non-opted-in players is used only in memory (for example, to find who got the first kill in a round) and is never stored or shown. Players hidden by the game are never analyzed.</li>
+      <li><strong>Official rank only.</strong> No MMR or ELO calculators and no estimates of hidden RR. The rank leaderboard uses the official tier and, for Immortal and Radiant, the official Rank Rating from VAL-RANKED-V1. Below Immortal, players of the same tier are shown as ties.</li>
+      <li><strong>Post-match only.</strong> Coaching uses completed matches. No overlay, no live assistance, no scouting of opponents. Tips never discourage the use of any agent or map.</li>
+      <li><strong>Players are honored, never shamed.</strong> Only positive milestones are announced, leaderboards never highlight drops, and coaching tips and weak spots are visible only to the player they belong to.</li>
+      <li><strong>No alternate reporting channel.</strong> Our report command covers only behavior inside the Discord server; for cheating or toxicity in matches, players are directed to the official in-game report system.</li>
+      <li><strong>Player of the week.</strong> Every Monday one opted-in member is chosen from that week's competitive stats (combat score, win rate, KDA, ADR, matches played), with a minimum number of matches. It is announced with the real numbers, resets every week and is never shown as a rating or next to the official rank. If Riot considers it problematic, we will replace it with simple per-stat podiums.</li>
+      <li><strong>Branding.</strong> Own name, logo and design; no official Riot logos. Game assets only from the Public Content Catalog. The "isn't endorsed by Riot Games" disclaimer is on every page and in the bot.</li>
+      <li>One production key, used for this single product only.</li>
+    </ul>
+
+    <h2>4. API usage</h2>
+    <div class="tabella-scorrevole">
+    <table>
+      <tr><th>API</th><th>Endpoint</th><th>When</th></tr>
+      <tr><td>ACCOUNT-V1</td><td><code>/riot/account/v1/accounts/me</code></td><td>Once per linking, with the RSO token</td></tr>
+      <tr><td>ACCOUNT-V1</td><td><code>/riot/account/v1/active-shards/by-game/val/by-puuid/{puuid}</code></td><td>Once per linking</td></tr>
+      <tr><td>ACCOUNT-V1</td><td><code>/riot/account/v1/accounts/by-puuid/{puuid}</code></td><td>Once a day per player (Riot ID changes)</td></tr>
+      <tr><td>VAL-MATCH-V1</td><td><code>/val/match/v1/matchlists/by-puuid/{puuid}</code></td><td>Adaptive: every 15 minutes for active players, down to once a day for inactive ones</td></tr>
+      <tr><td>VAL-MATCH-V1</td><td><code>/val/match/v1/matches/{matchId}</code></td><td>Once per new competitive match, even if several members played it</td></tr>
+      <tr><td>VAL-RANKED-V1</td><td><code>/val/ranked/v1/leaderboards/by-act/{actId}</code></td><td>EU, every 6 hours (official RR of linked Immortal and Radiant players)</td></tr>
+      <tr><td>VAL-CONTENT-V1</td><td><code>/val/content/v1/contents?locale=it-IT</code></td><td>Once a day (Italian names of agents, maps, acts)</td></tr>
+      <tr><td>VAL-STATUS-V1</td><td><code>/val/status/v1/platform-data</code></td><td>EU, every 10 minutes (maintenance notices)</td></tr>
+    </table>
+    </div>
+    <p>Estimated volume: about 800 requests per day with 30 linked players and 8,000 per day with 300, well below one request per second. All calls go through a single client that honors <code>X-App-Rate-Limit</code>, <code>X-Method-Rate-Limit</code> and <code>Retry-After</code>.</p>
+
+    <h2>5. Data and security</h2>
+    <ul>
+      <li>Stored data: PUUID, Riot ID, shard and per-match raw numbers (kills, deaths, assists, damage, shots, agent, map, tier, result) for opted-in players only.</li>
+      <li>GDPR: data access, export and deletion through bot commands; members who leave the server are hidden at once and deleted after 90 days. Full <a href="privacy.html">privacy policy</a> and <a href="termini.html">terms</a> (Italian).</li>
+      <li>Planned stack: TypeScript / Node.js, PostgreSQL and Docker on a VPS in the EU behind HTTPS. The API key and RSO client secret stay on the server only; the database is not exposed to the internet; backups are encrypted and stored off-site in the EU.</li>
+      <li>The linking flow is protected by the OAuth <code>state</code> parameter and signed cookies; linking tokens are single-use, short-lived and stored only as hashes.</li>
+    </ul>
+
+    <h2>6. Status and plan</h2>
+    <ul>
+      <li><strong>Done:</strong> product design and full specification, this website with the user flow, privacy policy, terms and visual identity.</li>
+      <li><strong>While waiting for approval:</strong> building the bot's foundations, the linking flow with a simulated login and the features that do not use Riot data, tested on a private development server. The public server opens only after approval, so that players never join a community without the stats it was built for.</li>
+      <li><strong>After approval:</strong> RSO integration first, well within the required 30 days; then match sync and stats, and a test with 10–20 players before opening publicly (about 6–8 weeks in total).</li>
+      <li>A prototype with simulated data can be provided on request.</li>
+    </ul>
+
+    <h2>7. Developer</h2>
+    <p><strong>Andrei Nicolae Telea</strong>, junior cybersecurity specialist based in Piombino (Livorno), Italy. Currently attending "Cyber Security Expert", a 990-hour post-diploma technical program (IFTS, May 2026 – March 2027) on Linux, networking, security operations, SIEM, vulnerability management and GDPR. Diploma in Business Information Systems; more than six years in heavy industry, following strict procedures and safety protocols. Security and privacy by design are central to how Ascend is built.</p>
+    <p><a href="https://github.com/andreitelea" rel="noopener">GitHub</a> · <a href="https://www.linkedin.com/in/andreitelea/" rel="noopener">LinkedIn</a> · <a href="mailto:andreibusinessworld@gmail.com">andreibusinessworld@gmail.com</a></p>
+  </div>
+</main>
+
+<footer class="piede">
+  <div class="contenitore">
+    <nav aria-label="Legal information">
+      <a href="index.html">Home</a>
+      <a href="privacy.html">Informativa privacy</a>
+      <a href="termini.html">Termini d'uso</a>
+      <a href="mailto:andreibusinessworld@gmail.com">Contact</a>
+    </nav>
+    <p class="disclaimer">Ascend isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.</p>
+  </div>
+</footer>
+
+</body>
+</html>
